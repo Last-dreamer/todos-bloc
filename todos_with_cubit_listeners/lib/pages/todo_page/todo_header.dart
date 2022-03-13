@@ -11,10 +11,24 @@ class TodoHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-       const  Text("Todo ",  style: TextStyle(fontSize: 40),),
-       Text("${context.watch<ActiveTodoCountCubit>().state.activeTodoCount} item left", 
-       style:const  TextStyle(fontSize:20, color: Colors.redAccent)),
-
+        const Text(
+          "Todo ",
+          style: TextStyle(fontSize: 40),
+        ),
+        BlocListener<TodoListCubit, TodoListState>(
+          listener: (context, state) {
+            var activeCount = state.todo.where((element) => !element.completed).toList().length;
+            context.read<ActiveTodoCountCubit>().updateActiveTodoCount(activeCount);
+          },
+          child: BlocBuilder<ActiveTodoCountCubit, ActiveTodoCountState>(
+            builder: (context, state) {
+              return Text(
+                  "${state.activeTodoCount} item left",
+                  style:
+                      const TextStyle(fontSize: 20, color: Colors.redAccent));
+            },
+          ),
+        ),
       ],
     );
   }
